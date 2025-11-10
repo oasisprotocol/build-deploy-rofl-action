@@ -1,0 +1,36 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Oasis CLI
+        uses: oasisprotocol/setup-cli-action@0.0.2
+        with:
+          version: '0.16.1'
+
+      - name: Build and deploy to ROFL
+        uses: ./
+        with:
+          wallet_account: test:grace
+          network: testnet
+          offline: true
+          unsigned: true
+          verify: true
+          working_directory: .github/super-rofl-test

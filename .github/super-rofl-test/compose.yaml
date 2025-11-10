@@ -1,0 +1,8 @@
+services:
+  frontend:
+    image: docker.io/hashicorp/http-echo:latest@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186
+    platform: linux/amd64
+    environment:
+      ECHO_TEXT: "hello rofl world"
+    ports:
+      - "5678:5678"

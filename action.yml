@@ -1,0 +1,119 @@
+name: Oasis ROFL
+description:
+  A framework that enables offchain computation with private data and verifiable
+  results
+author: Oasis Protocol Foundation
+
+branding:
+  icon: upload-cloud
+  color: blue
+
+inputs:
+  config:
+    description: Global CLI config file to use
+    required: false
+  deployment:
+    description: Deployment name (defaults to default)
+    required: false
+  encrypted:
+    description: Encrypt transaction call data (requires online mode)
+    required: false
+  fee_denom:
+    description: Override fee denomination (defaults to native)
+    required: false
+  force:
+    description: Force deployment
+    required: false
+  format:
+    description:
+      Transaction output format, one of [json, cbor] (defaults to json)
+    required: false
+  gas_limit:
+    description: Gas limit to use
+    required: false
+  gas_price:
+    description: Gas price to use
+    required: false
+  machine:
+    description: Machine name
+    required: false
+  network:
+    description: Network to use
+    required: false
+    default: mainnet
+  no_container:
+    description: Do not use the containerized builder
+    required: false
+  no_update_manifest:
+    description: Do not update the manifest
+    required: false
+  nonce:
+    description: Explicitly set transaction nonce
+    required: false
+  offer:
+    description: Offer name
+    required: false
+  offline:
+    description: Do not perform any operations requiring network access
+    required: false
+  only_validate:
+    description: Validate without building
+    required: false
+  output:
+    description: Output bundle filename
+    required: false
+  output_file:
+    description: Output transaction into specified file instead of broadcasting
+    required: false
+  provider:
+    description: Provider name
+    required: false
+  replace_machine:
+    description: Rent a new machine if the provided one expired
+    required: false
+  show_offers:
+    description: Show all provider offers and quit
+    required: false
+  term:
+    description: Term to pay for in advance [hour, month, year]
+    required: false
+  term_count:
+    description: Number of terms to pay for in advance
+    required: false
+  unsigned:
+    description: Do not sign transaction
+    required: false
+  verbose:
+    description: Verbose output
+    required: false
+  verify:
+    description: Verify build against manifest and on-chain state
+    required: false
+  wallet_account:
+    description: Oasis CLI account to use for wallet operations
+    required: true
+  wallet_algorithm:
+    description:
+      Cryptographic algorithm to use for wallet , one of [ed25519-adr8,
+      ed25519-raw, secp256k1-bip44, secp256k1-raw, sr25519-adr8, sr25519-raw]
+    required: false
+  wallet_import:
+    description: Run wallet import before build (true/false)
+    required: false
+  wallet_number:
+    description:
+      Key number to use in the key derivation scheme for wallet import
+    required: false
+  wallet_secret:
+    description: A secret key or mnemonic to use for wallet import
+    required: false
+  wipe_storage:
+    description: Whether to wipe machine storage
+    required: false
+  working_directory:
+    description: Directory to run all ROFL commands in
+    required: false
+
+runs:
+  using: node24
+  main: dist/index.js
