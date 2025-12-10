@@ -25,12 +25,13 @@
     ".": "./dist/index.js"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
-    "bundle": "npm run format:write && npm run package",
+    "bundle": "npm run format:write && npm run package && npm run format:write",
     "ci-test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 npx jest",
     "coverage": "npx make-coverage-badge --output-path ./badges/coverage.svg",
+    "format": "npx prettier --write .",
     "format:write": "npx prettier --write .",
     "format:check": "npx prettier --check .",
     "lint": "npx eslint .",
@@ -38,12 +39,20 @@
     "package": "npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "package:watch": "npm run package -- --watch",
     "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 npx jest",
+    "test:e2e": "act -W .github/workflows/e2e-local.yml",
+    "test:e2e:basic": "act -W .github/workflows/e2e-local.yml -j test-basic",
+    "test:e2e:list": "act -W .github/workflows/e2e-local.yml -l",
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
   },
   "license": "Apache-2.0",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/tool-cache": "^2.0.2"
+    "@actions/tool-cache": "^2.0.2",
+    "@safe-global/api-kit": "^4.0.1",
+    "@safe-global/protocol-kit": "^6.1.2",
+    "@safe-global/types-kit": "^3.0.0",
+    "ethers": "^6.13.0",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.0",
@@ -53,7 +62,8 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.6.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^9.36.0",

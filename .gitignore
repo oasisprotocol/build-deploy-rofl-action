@@ -100,3 +100,15 @@ __tests__/runner/*
 # IDE files
 .idea
 *.code-workspace
+.vscode/
+
+# Claude Code
+.claude/
+
+# act (GitHub Actions local testing)
+# .actrc can contain user-specific settings
+# Uncomment if you want to ignore it:
+# .actrc
+
+# ROFL build output
+*.orc

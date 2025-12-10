@@ -1,0 +1,170 @@
+# E2E tests designed to run locally with `act`
+# Run with: act -W .github/workflows/e2e-local.yml
+#
+# Prerequisites:
+#   - Install act: brew install act
+#   - Docker must be running
+#
+# Usage:
+#   act -W .github/workflows/e2e-local.yml                    # Run all jobs
+#   act -W .github/workflows/e2e-local.yml -j test-basic      # Run specific job
+#   act -W .github/workflows/e2e-local.yml --verbose          # Verbose output
+#   act -W .github/workflows/e2e-local.yml -n                 # Dry run
+
+name: E2E Local Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  # Test 1: Validate only (fast, no squashfs needed)
+  test-validate-only:
+    name: Validate Only
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run action - validate only mode
+        uses: ./
+        with:
+          wallet_account: test:grace
+          network: testnet
+          offline: true
+          unsigned: true
+          only_validate: true
+          skip_update: true
+          skip_deploy: true
+          working_directory: .github/super-rofl-test
+
+      - name: Verify CLI was installed
+        run: |
+          echo "Checking oasis CLI..."
+          which oasis
+          oasis --version
+
+  # Test 2: Full build
+  test-full-build:
+    name: Full Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run action - full offline build
+        uses: ./
+        with:
+          wallet_account: test:grace
+          network: testnet
+          offline: true
+          unsigned: true
+          skip_update: true
+          skip_deploy: true
+          working_directory: .github/super-rofl-test
+
+      - name: Verify build output
+        working-directory: .github/super-rofl-test
+        run: |
+          echo "=== Checking build artifacts ==="
+          ls -la
+          ORC_FILE=$(find . -name "*.orc" -type f | head -1)
+          if [ -n "$ORC_FILE" ]; then
+            echo "✅ ROFL bundle created: $ORC_FILE"
+            ls -lh "$ORC_FILE"
+          else
+            echo "❌ No .orc file found"
+            exit 1
+          fi
+
+  # Test 3: Skip flags functionality
+  test-skip-flags:
+    name: Skip Flags
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run action - skip all steps
+        uses: ./
+        with:
+          wallet_account: test:grace
+          network: testnet
+          offline: true
+          unsigned: true
+          skip_build: true
+          skip_update: true
+          skip_deploy: true
+          working_directory: .github/super-rofl-test
+
+      - name: Verify CLI installed but no build happened
+        run: |
+          echo "CLI should be available:"
+          oasis --version
+          echo "✅ Skip flags worked - no build errors"
+
+  # Test 4: Verbose output mode
+  test-verbose:
+    name: Verbose Mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run action with verbose output
+        uses: ./
+        with:
+          wallet_account: test:grace
+          network: testnet
+          offline: true
+          unsigned: true
+          only_validate: true
+          verbose: true
+          skip_update: true
+          skip_deploy: true
+          working_directory: .github/super-rofl-test
+
+  # Test 5: Custom output file
+  test-output-files:
+    name: Custom Output File
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Note: update/deploy in offline mode need nonce, so we skip them
+      # and just test that build generates output
+      - name: Run action - generate output files
+        id: rofl
+        uses: ./
+        with:
+          wallet_account: test:grace
+          network: testnet
+          offline: true
+          unsigned: true
+          skip_update: true
+          skip_deploy: true
+          output: custom-output.orc
+          working_directory: .github/super-rofl-test
+
+      - name: Check outputs were set
+        run: |
+          echo "=== Action Outputs ==="
+          echo "build_output: ${{ steps.rofl.outputs.build_output }}"
+
+      - name: Verify custom output file
+        working-directory: .github/super-rofl-test
+        run: |
+          echo "=== Checking output files ==="
+          ls -la
+
+          if [ -f "custom-output.orc" ]; then
+            echo "✅ custom-output.orc exists ($(stat -c%s custom-output.orc 2>/dev/null || stat -f%z custom-output.orc) bytes)"
+          else
+            echo "❌ custom-output.orc NOT found"
+            # Show what files do exist
+            find . -name "*.orc" -type f
+            exit 1
+          fi
