@@ -1,0 +1,236 @@
+name: Oasis ROFL
+description:
+  A framework that enables offchain computation with private data and verifiable
+  results
+author: Oasis Protocol Foundation
+
+branding:
+  icon: upload-cloud
+  color: blue
+
+inputs:
+  # Oasis CLI installation
+  cli_version:
+    description: |
+      Oasis CLI version to install. Options:
+      - "auto" (default): Read version from rofl.yaml tooling.version field
+      - "latest": Use the latest release from GitHub
+      - Specific version (e.g., "0.18.0"): Use exact version
+    required: false
+    default: 'auto'
+
+  # Auto-update feature
+  check_updates:
+    description: |
+      Run 'oasis rofl upgrade' to check for artifact updates (runtime, compose, etc).
+      If updates are found and create_update_pr is true, a PR will be created.
+    required: false
+    default: 'false'
+  create_update_pr:
+    description: |
+      Create a pull request if rofl.yaml changes are detected after running upgrade.
+      Requires check_updates: true and GITHUB_TOKEN with write permissions.
+    required: false
+    default: 'false'
+
+  config:
+    description: Global CLI config file to use
+    required: false
+  deployment:
+    description: Deployment name (defaults to default)
+    required: false
+  encrypted:
+    description: Encrypt transaction call data (requires online mode)
+    required: false
+    default: 'false'
+  fee_denom:
+    description: Override fee denomination (defaults to native)
+    required: false
+  force:
+    description: Force deployment
+    required: false
+    default: 'false'
+  format:
+    description:
+      Transaction output format, one of [json, cbor] (defaults to json)
+    required: false
+  gas_limit:
+    description: Gas limit to use
+    required: false
+  gas_price:
+    description: Gas price to use
+    required: false
+  machine:
+    description: Machine name
+    required: false
+  network:
+    description: Network to use
+    required: false
+    default: mainnet
+  no_container:
+    description: Do not use the containerized builder
+    required: false
+    default: 'false'
+  no_update_manifest:
+    description: Do not update the manifest
+    required: false
+    default: 'false'
+  update_manifest:
+    description: |
+      Allow updating rofl.yaml with new enclave IDs after build (skips verification).
+      WARNING: For testing only. Production deployments should commit enclave IDs
+      to source control and use the default verify behavior.
+    required: false
+    default: 'false'
+  nonce:
+    description: Explicitly set transaction nonce
+    required: false
+  offer:
+    description: Offer name
+    required: false
+  offline:
+    description: Do not perform any operations requiring network access
+    required: false
+    default: 'false'
+  only_validate:
+    description: Validate without building
+    required: false
+    default: 'false'
+  output:
+    description: Output bundle filename
+    required: false
+  output_file:
+    description: Output transaction into specified file instead of broadcasting
+    required: false
+  provider:
+    description: Provider name
+    required: false
+  replace_machine:
+    description: Rent a new machine if the provided one expired
+    required: false
+    default: 'false'
+  show_offers:
+    description: Show all provider offers and quit
+    required: false
+    default: 'false'
+  term:
+    description: Term to pay for in advance [hour, month, year]
+    required: false
+  term_count:
+    description: Number of terms to pay for in advance
+    required: false
+  unsigned:
+    description: Do not sign transaction
+    required: false
+    default: 'false'
+  verbose:
+    description: Verbose output
+    required: false
+    default: 'false'
+  verify:
+    description: Verify build against manifest and on-chain state
+    required: false
+    default: 'false'
+  wallet_account:
+    description:
+      Oasis CLI account to use for wallet operations (defaults to test:alice for
+      offline/unsigned mode)
+    required: false
+    default: 'test:alice'
+  wallet_algorithm:
+    description:
+      Cryptographic algorithm to use for wallet , one of [ed25519-adr8,
+      ed25519-raw, secp256k1-bip44, secp256k1-raw, sr25519-adr8, sr25519-raw]
+    required: false
+  wallet_import:
+    description: Run wallet import before build (true/false)
+    required: false
+    default: 'false'
+  wallet_number:
+    description:
+      Key number to use in the key derivation scheme for wallet import
+    required: false
+  wallet_secret:
+    description: |
+      Secret for wallet import. Format depends on wallet_algorithm:
+      - Mnemonic algorithms (ed25519-adr8, secp256k1-bip44, sr25519-adr8): BIP-39 phrase
+      - Raw algorithms (ed25519-raw, secp256k1-raw, sr25519-raw): Private key hex
+    required: false
+  wipe_storage:
+    description: Whether to wipe machine storage
+    required: false
+    default: 'false'
+  working_directory:
+    description: Directory to run all ROFL commands in
+    required: false
+
+  # Skip flags
+  skip_build:
+    description: Skip the ROFL build step
+    required: false
+    default: 'false'
+  skip_update:
+    description: Skip the ROFL update step
+    required: false
+    default: 'false'
+  skip_deploy:
+    description: Skip the ROFL deploy step
+    required: false
+    default: 'false'
+
+  # Separate output files for update and deploy
+  update_output_file:
+    description: Output file for update transaction (instead of broadcasting)
+    required: false
+  deploy_output_file:
+    description: Output file for deploy transaction (instead of broadcasting)
+    required: false
+
+  # Safe wallet inputs (enabled automatically when safe_address is provided)
+  safe_address:
+    description: Safe multisig contract address
+    required: false
+  safe_proposer_key:
+    description: Private key for Safe transaction proposer
+    required: false
+  safe_rpc_url:
+    description:
+      RPC URL for the chain where Safe is deployed (auto-detected from network
+      if not specified)
+    required: false
+  safe_service_url:
+    description:
+      Safe transaction service URL (auto-detected from network if not specified)
+    required: false
+  safe_chain_id:
+    description:
+      Chain ID for Safe transactions (auto-detected from network if not
+      specified)
+    required: false
+  safe_dry_run:
+    description: |
+      Dry run mode for Safe proposal. Runs all steps (CBOR parsing, subcall generation,
+      transaction creation, signing) but does NOT submit to the Safe service.
+      Useful for testing the Safe integration without actually proposing.
+    required: false
+    default: 'false'
+
+outputs:
+  build_output:
+    description: Path to the built ROFL ORC bundle
+  update_file:
+    description: Path to the generated update transaction file
+  deploy_file:
+    description: Path to the generated deploy transaction file
+  safe_tx_hash:
+    description: Hash of the proposed Safe transaction
+  update_pr_url:
+    description:
+      URL of the created pull request (when check_updates and create_update_pr
+      are enabled)
+  updates_available:
+    description: Whether updates are available for rofl.yaml ('true' or 'false')
+
+runs:
+  using: node20
+  main: dist/index.js

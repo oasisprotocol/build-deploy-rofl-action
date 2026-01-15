@@ -1,0 +1,18 @@
+# act configuration file
+# See: https://github.com/nektos/act
+
+# Use medium-sized images by default (good balance of features and size)
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+-P ubuntu-22.04=catthehacker/ubuntu:act-22.04
+-P ubuntu-20.04=catthehacker/ubuntu:act-20.04
+
+# macOS runs on self-hosted (native) when testing locally
+-P macos-latest=-self-hosted
+-P macos-14=-self-hosted
+-P macos-13=-self-hosted
+
+# Reuse containers between runs for faster execution
+--reuse
+
+# Use the artifact server for artifact handling
+--artifact-server-path /tmp/act-artifacts
